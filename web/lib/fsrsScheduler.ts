@@ -1,6 +1,19 @@
-import { FSRS, Rating, DEFAULT_PARAMETERS } from "ts-fsrs";
+import { FSRS, Rating, type FSRSParameters } from "ts-fsrs";
 
-const fsrs = new FSRS(DEFAULT_PARAMETERS);
+// ts-fsrs는 버전마다 기본 파라미터 export가 달라서,
+// 가장 안정적으로는 우리가 기본값을 직접 넣어줍니다.
+const params: Partial<FSRSParameters> = {
+  // 아래 값들은 "무난한 기본값"입니다.
+  // (FSRS 알고리즘은 파라미터 튜닝 가능하지만, 일단 배포/동작이 목표)
+  request_retention: 0.9,
+  maximum_interval: 36500,
+  w: [
+    0.4, 0.6, 2.4, 5.8, 4.9, 0.8, 1.0, 0.8, 2.0,
+    0.2, 0.3, 1.1, 1.6, 0.3, 2.0, 0.1, 1.5,
+  ],
+};
+
+const fsrs = new FSRS(params);
 
 type DbState = {
   due_at: string | null;
