@@ -58,8 +58,44 @@ const cur = useMemo(() => items[idx], [items, idx]);
   loadPreview();
 }, [cur?.id]);
 
+const baseBtn: React.CSSProperties = {
+  padding: "8px 14px",
+  borderRadius: 8,
+  border: "none",
+  cursor: "pointer",
+  fontSize: 14,
+  fontWeight: 600,
+};
 
-  
+const againBtn: React.CSSProperties = {
+  ...baseBtn,
+  background: "#555",      // 진한 회색
+  color: "#fff",           // 흰색 글자
+};
+
+const hardBtn: React.CSSProperties = {
+  ...baseBtn,
+  background: "#d9534f",   // 빨간색
+  color: "#fff",
+};
+
+const goodBtn: React.CSSProperties = {
+  ...baseBtn,
+  background: "#f0ad4e",   // 노란색
+  color: "#000",           // 검정 글자
+};
+
+const easyBtn: React.CSSProperties = {
+  ...baseBtn,
+  background: "#b8e6b8",   // 연한 초록색
+  color: "#000",
+};
+
+const reloadBtn: React.CSSProperties = {
+  ...baseBtn,
+  background: "#eee",
+  color: "#333",
+};
 
   async function loadQueue() {
     setMsg("불러오는 중...");
@@ -164,11 +200,13 @@ const cur = useMemo(() => items[idx], [items, idx]);
 
           
           <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
-            <button onClick={() => answer(1)} style={btn}>Again</button>
-            <button onClick={() => answer(2)} style={btn}>Hard</button>
-            <button onClick={() => answer(3)} style={btn}>Good</button>
-            <button onClick={() => answer(4)} style={btn}>Easy</button>
-            <button onClick={loadQueue} style={{ ...btn, marginLeft: "auto" }}>Reload</button>
+          <button onClick={() => answer(1)} style={againBtn}>Again</button>
+          <button onClick={() => answer(2)} style={hardBtn}>Hard</button>
+          <button onClick={() => answer(3)} style={goodBtn}>Good</button>
+          <button onClick={() => answer(4)} style={easyBtn}>Easy</button>
+          <button onClick={loadQueue} style={{ ...reloadBtn, marginLeft: "auto" }}>
+            Reload
+          </button>
           </div>
 
                   <div
