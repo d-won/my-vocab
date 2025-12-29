@@ -230,7 +230,7 @@ async function loadQueue(nextMode: "all" | "trouble" = mode) {
 
       {!cur ? (
         <div style={{ color: "#666" }}>
-          <button onClick={loadQueue} style={btn}>큐 다시 불러오기</button>{" "}
+          <button onClick={() => loadQueue("trouble")} style={btn}>큐 다시 불러오기</button>{" "}
           <a href="/" style={{ ...btn, textDecoration: "none" }}>Home</a>
         </div>
       ) : (
@@ -261,7 +261,7 @@ async function loadQueue(nextMode: "all" | "trouble" = mode) {
           <button onClick={() => answer(2)} style={hardBtn}>Hard</button>
           <button onClick={() => answer(3)} style={goodBtn}>Good</button>
           <button onClick={() => answer(4)} style={easyBtn}>Easy</button>
-          <button onClick={loadQueue} style={{ ...reloadBtn, marginLeft: "auto" }}>
+          <button onClick={() => loadQueue()} style={{ ...reloadBtn, marginLeft: "auto" }}>
             Reload
           </button>
           </div>
