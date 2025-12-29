@@ -107,6 +107,12 @@ export default function WordsPage() {
       <header style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
         <h1 style={{ margin: 0 }}>Words</h1>
 
+              <nav style={{ display: "flex", gap: 10, fontSize: 14, marginLeft: "auto" }}>
+        <a href="/" style={{ textDecoration: "none" }}>홈</a>
+        <a href="/review" style={{ textDecoration: "none" }}>복습하기</a>
+        <a href="/dashboard" style={{ textDecoration: "none" }}>대시보드</a>
+      </nav>
+
         <input
           value={q}
           onChange={(e) => { setQ(e.target.value); setPage(1); }}
