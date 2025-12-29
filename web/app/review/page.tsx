@@ -10,6 +10,9 @@ export default function ReviewPage() {
   const [showBack, setShowBack] = useState(false);
   const [msg, setMsg] = useState("");
 
+  // 내가 새로 추가 251229 2213
+  const [mode, setMode] = useState<"all" | "trouble">("all");
+  
   // 내가 새로 추가 251229 2107 
 
   const [nextDue, setNextDue] = useState<{
@@ -97,19 +100,27 @@ const reloadBtn: React.CSSProperties = {
   color: "#333",
 };
 
-  async function loadQueue() {
-    setMsg("불러오는 중...");
-    const res = await fetch("/api/review/queue?due=30&new=10");
-    const json = await res.json();
-    if (!res.ok) setMsg(`오류: ${json.error ?? "unknown"}`);
-    else {
-      setItems(json.items ?? []);
-      setIdx(0);
-      setShowBack(false);
-      setMsg(json.items?.length ? "" : "오늘 학습할 카드가 없습니다.");
-    }
-  }
+async function loadQueue(nextMode: "all" | "trouble" = mode) {
+  setMsg("불러오는 중...");
 
+  const baseUrl = "/api/review/queue?due=30&new=10";
+  const url =
+    nextMode === "trouble"
+      ? `${baseUrl}&mode=trouble`
+      : baseUrl;
+
+  const res = await fetch(url);
+  const json = await res.json();
+
+  if (!res.ok) {
+    setMsg(`오류: ${json.error ?? "unknown"}`);
+  } else {
+    setItems(json.items ?? []);
+    setIdx(0);
+    setShowBack(false);
+    setMsg(json.items?.length ? "" : "오늘 학습할 카드가 없습니다.");
+  }
+}
   useEffect(() => { loadQueue(); }, []);
 
  async function answer(rating: 1 | 2 | 3 | 4) {
@@ -143,23 +154,70 @@ const reloadBtn: React.CSSProperties = {
   return (
 
     <main style={{ maxWidth: 720, margin: "40px auto", padding: 16, fontFamily: "system-ui" }}>
-      <div
+  <div
   style={{
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 14,
+    gap: 12,
+    flexWrap: "wrap",
   }}
 >
-  {/* 왼쪽: 제목 */}
-  <h1 style={{ fontSize: 20 }}>Review</h1>
+  <h1 style={{ fontSize: 20, margin: 0 }}>Review</h1>
 
-  {/* 오른쪽: 진행도 + 네비게이션 */}
-  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-    <div style={{ color: "#666" }}>
+  <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+    {/* 진행도 */}
+    <div style={{ color: "#666", minWidth: 48 }}>
       {items.length ? `${idx + 1}/${items.length}` : ""}
     </div>
 
+    {/* 토글 */}
+    <div
+      style={{
+        display: "flex",
+        border: "1px solid #e5e7eb",
+        borderRadius: 10,
+        overflow: "hidden",
+      }}
+    >
+      <button
+        onClick={() => {
+          setMode("all");
+          loadQueue("all");
+        }}
+        style={{
+          padding: "8px 12px",
+          border: "none",
+          cursor: "pointer",
+          fontWeight: 700,
+          background: mode === "all" ? "#e5e7eb" : "#fff",
+          color: "#111",
+        }}
+      >
+        전체
+      </button>
+
+      <button
+        onClick={() => {
+          setMode("trouble");
+          loadQueue("trouble");
+        }}
+        style={{
+          padding: "8px 12px",
+          border: "none",
+          cursor: "pointer",
+          fontWeight: 800,
+          background: mode === "trouble" ? "#f59e0b" : "#fff",
+          color: mode === "trouble" ? "#111" : "#555",
+        }}
+        title="Hard 또는 Again으로 평가된 카드만 봅니다"
+      >
+        Hard / Again만
+      </button>
+    </div>
+
+    {/* 네비게이션 */}
     <nav style={{ display: "flex", gap: 10, fontSize: 14 }}>
       <a href="/" style={{ textDecoration: "none" }}>홈</a>
       <a href="/words" style={{ textDecoration: "none" }}>단어목록</a>
@@ -198,7 +256,6 @@ const reloadBtn: React.CSSProperties = {
             )}
           </div>
 
-          
           <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
           <button onClick={() => answer(1)} style={againBtn}>Again</button>
           <button onClick={() => answer(2)} style={hardBtn}>Hard</button>

@@ -3,20 +3,37 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const dueN = Number(searchParams.get("due") ?? 30);
+  const mode = searchParams.get("mode"); // "trouble" 이면 Hard/Again만
+
+  const dueN = Number(searchParams.get("due") ?? 50);
   const newN = Number(searchParams.get("new") ?? 10);
 
-  // due 카드
-  const { data: dueCards, error: dueErr } = await supabaseAdmin
-    .from("srs_state")
-    .select("card_id, due_at")
+// due 카드
+let dueQuery = supabaseAdmin
+  .from("srs_state")
+  .select("card_id, due_at, last_rating, last_rating_at");
+
+if (mode === "trouble") {
+  // ✅ 전체 기간에서 Hard/Again만 (오늘 due 조건 제거)
+  dueQuery = dueQuery
+    .in("last_rating", [1, 2])
+    .order("last_rating_at", { ascending: false })
+    .limit(50);
+} else {
+  // ✅ 기본 모드: 오늘 due만
+  dueQuery = dueQuery
     .lte("due_at", new Date().toISOString())
     .order("due_at", { ascending: true })
     .limit(dueN);
+}
+
+  const { data: dueCards, error: dueErr } = await dueQuery;
 
   if (dueErr) return NextResponse.json({ error: dueErr.message }, { status: 500 });
 
   const dueIds = (dueCards ?? []).map((d) => d.card_id);
+
+  const effectiveNewN = mode === "trouble" ? 0 : newN;
 
   // 신규 카드: srs_state가 없는 cards
 
@@ -24,7 +41,7 @@ let newQuery = supabaseAdmin
   .from("cards")
   .select("id, created_at")
   .order("created_at", { ascending: true })
-  .limit(newN);
+  .limit(effectiveNewN);
 
 if (dueIds.length > 0) {
   const inList = `(${dueIds.map((x) => `"${x}"`).join(",")})`;

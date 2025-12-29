@@ -5,6 +5,8 @@ import { scheduleNext, toFsrsCard } from "@/lib/fsrsScheduler";
 export async function POST(req: Request) {
   const body = await req.json();
   const cardId: string = body.cardId;
+  const nowIso = new Date().toISOString();
+  
   const rating: number = Number(body.rating);
   const elapsedMs: number | undefined = body.elapsedMs ? Number(body.elapsedMs) : undefined;
 
@@ -34,6 +36,8 @@ export async function POST(req: Request) {
       reps: next.reps,
       lapses: next.lapses,
       last_reviewed_at: next.last_reviewed_at,
+      last_rating: rating,
+      last_rating_at: nowIso,
     })
     .eq("card_id", cardId);
 
