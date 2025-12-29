@@ -48,6 +48,21 @@ export default function HomePage() {
           <div style={{ fontWeight: 700 }}>단어 목록 보기/검색/수정 (/words)</div>
           <div style={{ color: "#666", marginTop: 4 }}>전체 단어를 보고 수정</div>
         </a>
+
+        <a
+  href="/dashboard"
+  style={{
+    display: "block",
+    padding: 12,
+    border: "1px solid #eee",
+    borderRadius: 10,
+    textDecoration: "none",
+  }}
+>
+  <div style={{ fontWeight: 700 }}>학습 대시보드 (/dashboard)</div>
+  <div style={{ color: "#666", marginTop: 4 }}>상태별 개수, due 분포 히스토그램</div>
+</a>
+
       </div>
     </main>
   );
