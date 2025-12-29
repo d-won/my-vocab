@@ -1,8 +1,6 @@
-import { FSRS, Rating } from "ts-fsrs";
+import { FSRS, Rating, DEFAULT_PARAMETERS } from "ts-fsrs";
 
-// ts-fsrs는 Card 타입/필드가 버전에 따라 조금씩 다를 수 있어
-// 런타임에서 필요한 필드만 확실히 채워서 repeat()가 터지지 않게 만든다.
-const fsrs = new FSRS();
+const fsrs = new FSRS(DEFAULT_PARAMETERS);
 
 type DbState = {
   due_at: string | null;
